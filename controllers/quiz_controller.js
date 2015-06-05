@@ -16,7 +16,10 @@ exports.load = function (req, res, next, quizId) {
 exports.index = function (req, res) {
   // SQLite busca con like sin tener en cuenta la capitalización
   // Para obtener el mismo resultado en postgresql hacemos la búsqueda en minúsculas
-  models.Quiz.findAll({ where: ["lower(pregunta) like ?", sanitize(req.query.search).toLowerCase()] })
+  models.Quiz.findAll({
+          where: ["lower(pregunta) like ?", sanitize(req.query.search).toLowerCase()],
+          order: ["pregunta"] // orden alfabético de las preguntas
+          })
   .then(function (quizes) {
     res.render('quizes/index.ejs', { quizes: quizes });
   }).catch(function (error) { next(error); });
