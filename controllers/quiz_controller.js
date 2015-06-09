@@ -114,7 +114,7 @@ exports.update = function (req, res) {
       errors[p] = { message: err[p] };
     }
 
-    res.render('quizes/edit', { quiz: quiz, errors: errors });
+    res.render('/quizes/edit', { quiz: quiz, errors: errors });
   } else {
     // guarda en la BD los campos y pregunta la respuesta de quiz
     req.quiz
@@ -123,6 +123,14 @@ exports.update = function (req, res) {
       res.redirect('/quizes'); // redirección HTTP a la lista de preguntas
     });
   }
+};
+
+// DELETE /quizes/:quizId
+exports.destroy = function (req, res) {
+  req.quiz.destroy()
+  .then(function () {
+    res.redirect('/quizes');
+  }).catch(function (error) { next(error); });
 };
 
 // Funciones auxiliares
