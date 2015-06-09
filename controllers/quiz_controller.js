@@ -43,7 +43,7 @@ exports.answer = function (req, res) {
             });
 };
 
-// GET /quize/new
+// GET /quizes/new
 exports.new = function (req, res) {
   var quiz = models.Quiz.build(
     { pregunta: "Pregunta", respuesta: "Respuesta" }
@@ -88,6 +88,37 @@ exports.create= function (req, res) {
   } else {
     // guarda en la BD los campos y pregunta la respuesta de quiz
     quiz.save({ fields: ["pregunta", "respuesta"] })
+    .then(function () {
+      res.redirect('/quizes'); // redirección HTTP a la lista de preguntas
+    });
+  }
+};
+
+// GET /quizes/:quizId/edit
+exports.edit = function (req, res) {
+  var quiz = req.quiz; // aquí lo guarda Autoload
+  res.render('quizes/edit', { quiz: quiz, errors: [] });
+};
+
+// PUT /quizes/:quizId
+exports.update = function (req, res) {
+  req.quiz.pregunta = req.body.quiz.pregunta;
+  req.quiz.respuesta = req.body.quiz.respuesta;
+
+  var err = req.quiz.validate();
+
+  if (err) {
+    var errors = [];
+
+    for (var p = 0; p < err.length; p++) {
+      errors[p] = { message: err[p] };
+    }
+
+    res.render('quizes/edit', { quiz: quiz, errors: errors });
+  } else {
+    // guarda en la BD los campos y pregunta la respuesta de quiz
+    req.quiz
+    .save({ fields: ["pregunta", "respuesta"] })
     .then(function () {
       res.redirect('/quizes'); // redirección HTTP a la lista de preguntas
     });
