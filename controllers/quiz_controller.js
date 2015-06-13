@@ -117,7 +117,7 @@ exports.update = function (req, res) {
       errors[p] = { message: err[p] };
     }
 
-    res.render('/quizes/edit', { quiz: req.quiz, errors: errors, temas: temasAceptados });
+    res.render('quizes/edit', { quiz: req.quiz, errors: errors, temas: temasAceptados });
   } else {
     // guarda en la BD los campos y pregunta la respuesta de quiz
     req.quiz
