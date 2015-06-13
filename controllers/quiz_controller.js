@@ -1,5 +1,7 @@
 var models = require('../models/models.js');
 
+var temasAceptados = ['Otro', 'Humanidades', 'Ocio', 'Ciencia', 'Tecnología'];
+
 // Autoload - factoriza el código si ruta incluye :quizId
 exports.load = function (req, res, next, quizId) {
   models.Quiz.find(quizId).then(function (quiz) {
@@ -49,7 +51,7 @@ exports.new = function (req, res) {
     { pregunta: "Pregunta", respuesta: "Respuesta", tema: "Otro" }
   );
 
-  res.render('quizes/new', { quiz: quiz, errors: [] });
+  res.render('quizes/new', { quiz: quiz, errors: [], temas: temasAceptados });
 };
 
 // POST /quizes/create
@@ -97,7 +99,7 @@ exports.create= function (req, res) {
 // GET /quizes/:quizId/edit
 exports.edit = function (req, res) {
   var quiz = req.quiz; // aquí lo guarda Autoload
-  res.render('quizes/edit', { quiz: quiz, errors: [] });
+  res.render('quizes/edit', { quiz: quiz, errors: [], temas: temasAceptados });
 };
 
 // PUT /quizes/:quizId

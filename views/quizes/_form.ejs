@@ -4,11 +4,9 @@
 <input type="text" id="resp" name="quiz[respuesta]" value="<%= quiz.respuesta %>" /><br />
 <label for="tema" class="rem">Temática:</label>
 <select id="tema" name="quiz[tema]">
-  <option value="otro" selected>Otro</option>
-  <option value="humanidades">Humanidades</option>
-  <option value="ocio">Ocio</option>
-  <option value="ciencia">Ciencia</option>
-  <option value="tecnologia">Tecnología</option>
+  <% for (var i = 0; i < temas.length; i++) { %>
+    <option value="<%= temas[i] %>" <%= quiz.tema === temas[i]?'selected=selected':'' %>><%= temas[i] %></option>
+  <% } %>
 </select><br />
 <a href="/quizes"><button type="button">Cancelar</button></a>
 <input type="submit" value="Salvar" />
