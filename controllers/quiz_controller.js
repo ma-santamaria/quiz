@@ -86,7 +86,7 @@ exports.create= function (req, res) {
       errors[p] = { message: err[p] };
     }
 
-    res.render('quizes/new', { quiz: quiz, errors: errors });
+    res.render('quizes/new', { quiz: quiz, errors: errors, temas: temasAceptados });
   } else {
     // guarda en la BD los campos y pregunta la respuesta de quiz
     quiz.save({ fields: ["pregunta", "respuesta", "tema"] })
@@ -117,7 +117,7 @@ exports.update = function (req, res) {
       errors[p] = { message: err[p] };
     }
 
-    res.render('/quizes/edit', { quiz: quiz, errors: errors });
+    res.render('/quizes/edit', { quiz: req.quiz, errors: errors, temas: temasAceptados });
   } else {
     // guarda en la BD los campos y pregunta la respuesta de quiz
     req.quiz
