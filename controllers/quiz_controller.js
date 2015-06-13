@@ -79,6 +79,9 @@ exports.create= function (req, res) {
 
   var err = quiz.validate();
 
+  // Validación manual del tema
+  err = validateTopic(quiz, err);
+
   if (err) {
     var errors = [];
 
@@ -86,7 +89,7 @@ exports.create= function (req, res) {
       errors[p] = { message: err[p] };
     }
 
-    res.render('quizes/new', { quiz: quiz, errors: errors });
+    res.render('quizes/new', { quiz: quiz, errors: errors, temas: temasAceptados });
   } else {
     // guarda en la BD los campos y pregunta la respuesta de quiz
     quiz.save({ fields: ["pregunta", "respuesta", "tema"] })
@@ -110,6 +113,9 @@ exports.update = function (req, res) {
 
   var err = req.quiz.validate();
 
+  // Validación manual del tema
+  console.log('Hemos validado a mano');
+
   if (err) {
     var errors = [];
 
@@ -117,7 +123,7 @@ exports.update = function (req, res) {
       errors[p] = { message: err[p] };
     }
 
-    res.render('/quizes/edit', { quiz: quiz, errors: errors });
+    res.render('quizes/edit', { quiz: req.quiz, errors: errors, temas: temasAceptados });
   } else {
     // guarda en la BD los campos y pregunta la respuesta de quiz
     req.quiz
@@ -140,4 +146,19 @@ exports.destroy = function (req, res) {
 function sanitize(str) {
   var tmp = str || "";
   return "%" + tmp.trim().replace(/ /g, "%") + "%";
+}
+
+function isValidTopic (aTopic) {
+  return temasAceptados.indexOf(aTopic) > -1;
+}
+
+function validateTopic(quiz, err) {
+  if (!isValidTopic(quiz.tema)) {
+    var topicError = new Error('-> No existe la temática ' + quiz.tema);
+    if (err) {
+      return err.push(topicError);
+    } else {
+      return [topicError];
+    }
+  }
 }
