@@ -1,5 +1,6 @@
 var models = require('../models/models.js');
 
+// TODO: extraer temasAceptados, ¿tipo de datos virtual en el modelo?
 var temasAceptados = ['Otro', 'Humanidades', 'Ocio', 'Ciencia', 'Tecnología'];
 
 // Autoload - factoriza el código si ruta incluye :quizId
