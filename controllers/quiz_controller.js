@@ -80,11 +80,7 @@ exports.create= function (req, res) {
   var err = quiz.validate();
 
   if (err) {
-    var errors = [];
-
-    for (var p = 0; p < err.length; p++) {
-      errors[p] = { message: err[p] };
-    }
+    var errors = errToArray(err);
 
     res.render('quizes/new', { quiz: quiz, errors: errors, temas: temasAceptados });
   } else {
@@ -111,11 +107,7 @@ exports.update = function (req, res) {
   var err = req.quiz.validate();
 
   if (err) {
-    var errors = [];
-
-    for (var p = 0; p < err.length; p++) {
-      errors[p] = { message: err[p] };
-    }
+    var errors = errToArray(err);
 
     res.render('quizes/edit', { quiz: req.quiz, errors: errors, temas: temasAceptados });
   } else {
@@ -140,4 +132,15 @@ exports.destroy = function (req, res) {
 function sanitize(str) {
   var tmp = str || "";
   return "%" + tmp.trim().replace(/ /g, "%") + "%";
+}
+
+function errToArray(err) {
+  var errArray = [];
+  var i = 0;
+
+  for (var p in err) {
+    errArray[i++] = { message: err[p] };
+  }
+
+  return errArray;
 }
