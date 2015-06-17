@@ -19,7 +19,7 @@ exports.create = function(req, res) {
   if (err) {
     var errors = errToArray(err);
 
-    res.render('comments/new.ejs', { comment: comment, errors: errors });
+    res.render('comments/new.ejs', { quizid: req.params.quizId, comment: comment, errors: errors });
   } else {
     comment.save() // guardamos el comentario en la BD
     .then( function() { res.redirect('/quizes/' + req.params.quizId); });
