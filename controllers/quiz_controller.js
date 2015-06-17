@@ -1,4 +1,5 @@
 var models = require('../models/models.js');
+var helpers = require('./helpers.js');
 
 // TODO: extraer temasAceptados, ¿tipo de datos virtual en el modelo?
 var temasAceptados = ['Otro', 'Humanidades', 'Ocio', 'Ciencia', 'Tecnología'];
@@ -24,7 +25,7 @@ exports.index = function (req, res) {
   // SQLite busca con like sin tener en cuenta la capitalización
   // Para obtener el mismo resultado en postgresql hacemos la búsqueda en minúsculas
   models.Quiz.findAll({
-          where: ["lower(pregunta) like ?", sanitize(req.query.search).toLowerCase()],
+          where: ["lower(pregunta) like ?", helpers.sanitize(req.query.search).toLowerCase()],
           order: ["pregunta"] // orden alfabético de las preguntas
           })
   .then(function (quizes) {
@@ -85,7 +86,7 @@ exports.create= function (req, res) {
   var err = quiz.validate();
 
   if (err) {
-    var errors = errToArray(err);
+    var errors = helpers.errToArray(err);
 
     res.render('quizes/new', { quiz: quiz, errors: errors, temas: temasAceptados });
   } else {
@@ -112,7 +113,7 @@ exports.update = function (req, res) {
   var err = req.quiz.validate();
 
   if (err) {
-    var errors = errToArray(err);
+    var errors = helpers.errToArray(err);
 
     res.render('quizes/edit', { quiz: req.quiz, errors: errors, temas: temasAceptados });
   } else {
@@ -132,20 +133,3 @@ exports.destroy = function (req, res) {
     res.redirect('/quizes');
   }).catch(function (error) { next(error); });
 };
-
-// Funciones auxiliares
-function sanitize(str) {
-  var tmp = str || "";
-  return "%" + tmp.trim().replace(/ /g, "%") + "%";
-}
-
-function errToArray(err) {
-  var errArray = [];
-  var i = 0;
-
-  for (var p in err) {
-    errArray[i++] = { message: err[p] };
-  }
-
-  return errArray;
-}

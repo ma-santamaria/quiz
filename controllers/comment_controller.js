@@ -1,4 +1,5 @@
 var models = require('../models/models.js');
+var helpers = require('./helpers.js');
 
 // GET /quizes/:quizId/comments/new
 exports.new = function(req, res) {
@@ -17,7 +18,7 @@ exports.create = function(req, res) {
   var err = comment.validate();
 
   if (err) {
-    var errors = errToArray(err);
+    var errors = helpers.errToArray(err);
 
     res.render('comments/new.ejs', { comment: comment, errors: errors });
   } else {
@@ -25,16 +26,3 @@ exports.create = function(req, res) {
     .then( function() { res.redirect('/quizes/' + req.params.quizId); });
   } // TODO: Falta catch para errores
 };
-
-// Funciones auxiliares
-
-function errToArray(err) {
-  var errArray = [];
-  var i = 0;
-
-  for (var p in err) {
-    errArray[i++] = { message: err[p] };
-  }
-
-  return errArray;
-}
