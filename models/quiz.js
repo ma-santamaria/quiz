@@ -1,6 +1,6 @@
 // Definición del modelo de Quiz
 
-var temasAceptados = ['Otro', 'Humanidades', 'Ocio', 'Ciencia', 'Tecnología'];
+var Subject = require('./subject.js');
 
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('Quiz',
@@ -18,7 +18,7 @@ module.exports = function(sequelize, DataTypes) {
               validate: {
                 notEmpty: { msg: "-> Falta temática"},
                 isIn: {
-                  args: [temasAceptados],
+                  args: [Subject.temasAceptados],
                   msg: "-> Tema no válido"
                 }
               }

@@ -39,6 +39,8 @@ Quiz.hasMany(Comment);
 
 exports.Quiz = Quiz; // exportar la definición de la tabla Quiz
 exports.Comment = Comment; // exportar la definición de la tabla Comment
+var Subject = require('./subject.js');
+exports.Subject = Subject; // exportar la definición de los temas
 
 // sequelize.sync() crea e inicializa la tabla de preguntas en la BBDD
 sequelize.sync().then(function () {
