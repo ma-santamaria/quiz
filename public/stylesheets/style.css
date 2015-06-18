@@ -26,3 +26,5 @@ img { width: 35%; }
 span.capitalize {
   text-transform: capitalize;
 }
+
+.right { float: right; }
