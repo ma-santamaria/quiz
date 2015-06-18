@@ -21,6 +21,7 @@ router.get('/logout', sessionController.destroy); // cerrar sesión (debería se
 
 // Autoload de comandos con :quizId
 router.param('quizId', quizController.load); // autoload :quizId
+router.param('commentId', commentController.load); // autoload :commentId
 
 // Definición de rutas para las quizes
 router.get('/quizes', quizController.index);
@@ -32,7 +33,11 @@ router.get('/quizes/:quizId(\\d+)/edit', sessionController.loginRequired, quizCo
 router.put('/quizes/:quizId(\\d+)', sessionController.loginRequired, quizController.update);
 router.delete('/quizes/:quizId(\\d+)', sessionController.loginRequired, quizController.destroy);
 
+// Definición de rutas para los comentarios
 router.get('/quizes/:quizId(\\d+)/comments/new', commentController.new);
 router.post('/quizes/:quizId(\\d+)/comments', commentController.create);
+router.get('/quizes/:quizId(\\d+)/comments/:commentId(\\d+)/publish',
+            sessionController.loginRequired,
+            commentController.publish); // debería ser un PUT
 
 module.exports = router;
