@@ -29,7 +29,7 @@ exports.create = function (req, res) {
     }
 
     // Crear la sesión req.session.user y guardar id y username
-    // La sesión se definae por la existensia de req.session.user
+    // La sesión se define por la existencia de req.session.user
     req.session.user = { id: user.id, username: user.username };
     res.redirect(req.session.redir.toString()); // volvemos a la página anterior
   });
