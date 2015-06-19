@@ -8,8 +8,12 @@ var partials = require('express-partials');
 var methodOverride = require('method-override');
 var session = require('express-session');
 
+// middlewares propios
+var autoLogout = require('./middlewares/auto-logout');
+
 var routes = require('./routes/index');
 
+// creamos la aplicación
 var app = express();
 
 // view engine setup
@@ -36,10 +40,12 @@ app.use(function (req, res, next) {
     req.session.redir = req.path;
   }
 
-  // Hacer visible req.sesion en las vistas
+  // Hacer visible req.session en las vistas
   res.locals.session = req.session;
   next();
 });
+
+app.use(autoLogout());
 
 app.use('/', routes);
 
