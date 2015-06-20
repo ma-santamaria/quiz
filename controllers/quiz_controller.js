@@ -5,10 +5,10 @@ var temasAceptados = models.Subject.temasAceptados;
 
 // Autoload - factoriza el código si ruta incluye :quizId
 exports.load = function (req, res, next, quizId) {
-  models.Quiz.find({
-    where: { id: Number(quizId) },
-    include: [{ model: models.Comment }]
-  })
+  models.Quiz
+  .findById(Number(quizId),
+          { include: [{ model: models.Comment }] } // le pedimos que tambien incluya los comentarios asociados
+          )
   .then(function (quiz) {
     if (quiz) {
       req.quiz = quiz;
@@ -16,7 +16,8 @@ exports.load = function (req, res, next, quizId) {
     } else {
       next(new Error('No existe quizId=' + quizId));
     }
-  });
+  })
+  .catch(function(error) { next(error); });
 };
 
 // GET /quizes
@@ -29,7 +30,8 @@ exports.index = function (req, res) {
           })
   .then(function (quizes) {
     res.render('quizes/index.ejs', { quizes: quizes, errors: [] });
-  }).catch(function (error) { next(error); });
+  })
+  .catch(function (error) { next(error); });
 };
 
 // GET /quizes/:quizId
@@ -63,38 +65,41 @@ exports.new = function (req, res) {
 exports.create= function (req, res) {
   var quiz = models.Quiz.build(req.body.quiz);
 
-  // quiz
-  // .validate()
-  // .then( function (err) {
-  //   if (err) {
-  //     res.render('quizes/new', { quiz: quiz, errors: err.errors });
-  //   } else {
-  //     // guarda en la BD los campos y pregunta la respuesta de quiz
-  //     quiz.save({ fields: ["pregunta", "respuesta"] })
-  //     .then(function () {
-  //       res.redirect('/quizes'); // redirección HTTP a la lista de preguntas
-  //     });
-  //   }
-  // });
+  quiz
+  .validate()
+  .then(function (err) {
+    if (err) {
+      res.render('quizes/new', { quiz: quiz, errors: err.errors, temas: temasAceptados });
+    } else {
+      // guarda en la BD los campos de quiz
+      quiz
+      .save({ fields: ["pregunta", "respuesta", "tema"] })
+      .then(function () {
+        res.redirect('/quizes'); // redirección HTTP a la lista de preguntas
+      });
+    }
+  })
+  .catch(function(error) { next(error); });
 
   // las líneas anteriores contienen el código visto en las transparencias,
-  // al parecer hay algún problema que impide llamar a la promesa then (¿versiones?)
-  // se utiliza la siguiente sugerencia del foro en su lugar:
+  // hay problemas que impide llamar a la promesa then en versiones antiguas
+  // de sequelize,
+  // se puede usar la siguiente sugerencia del foro en su lugar:
   // https://www.miriadax.net/web/javascript-node-js/foro/-/message_boards/view_message/34207346
 
-  var err = quiz.validate();
-
-  if (err) {
-    var errors = helpers.errToArray(err);
-
-    res.render('quizes/new', { quiz: quiz, errors: errors, temas: temasAceptados });
-  } else {
-    // guarda en la BD los campos y pregunta la respuesta de quiz
-    quiz.save({ fields: ["pregunta", "respuesta", "tema"] })
-    .then(function () {
-      res.redirect('/quizes'); // redirección HTTP a la lista de preguntas
-    });
-  }
+  // var err = quiz.validate();
+  //
+  // if (err) {
+  //   var errors = helpers.errToArray(err);
+  //
+  //   res.render('quizes/new', { quiz: quiz, errors: errors, temas: temasAceptados });
+  // } else {
+  //   // guarda en la BD los campos y pregunta la respuesta de quiz
+  //   quiz.save({ fields: ["pregunta", "respuesta", "tema"] })
+  //   .then(function () {
+  //     res.redirect('/quizes'); // redirección HTTP a la lista de preguntas
+  //   });
+  // }
 };
 
 // GET /quizes/:quizId/edit
@@ -109,26 +114,46 @@ exports.update = function (req, res) {
   req.quiz.respuesta = req.body.quiz.respuesta;
   req.quiz.tema = req.body.quiz.tema;
 
-  var err = req.quiz.validate();
+  req.quiz
+  .validate()
+  .then(
+    function(err){
+      if (err) {
+        res.render('quizes/edit', {quiz: req.quiz, errors: err.errors, temas: temasAceptados});
+      } else {
+        // guarda en la BD los campos de quiz
+        req.quiz
+        .save({ fields: ["pregunta", "respuesta", "tema"] })
+        .then(function() { res.redirect('/quizes');});
+      }     // Redirección HTTP a lista de preguntas (URL relativo)
+    }
+  )
+  .catch(function(error) { next(error); });
 
-  if (err) {
-    var errors = helpers.errToArray(err);
+  // Ver nota de POST /quizes/create
 
-    res.render('quizes/edit', { quiz: req.quiz, errors: errors, temas: temasAceptados });
-  } else {
-    // guarda en la BD los campos y pregunta la respuesta de quiz
-    req.quiz
-    .save({ fields: ["pregunta", "respuesta", "tema"] })
-    .then(function () {
-      res.redirect('/quizes'); // redirección HTTP a la lista de preguntas
-    });
-  }
+  // var err = req.quiz.validate();
+  //
+  // if (err) {
+  //   var errors = helpers.errToArray(err);
+  //
+  //   res.render('quizes/edit', { quiz: req.quiz, errors: errors, temas: temasAceptados });
+  // } else {
+  //   // guarda en la BD los campos y pregunta la respuesta de quiz
+  //   req.quiz
+  //   .save({ fields: ["pregunta", "respuesta", "tema"] })
+  //   .then(function () {
+  //     res.redirect('/quizes'); // redirección HTTP a la lista de preguntas
+  //   });
+  // }
 };
 
 // DELETE /quizes/:quizId
 exports.destroy = function (req, res) {
-  req.quiz.destroy()
+  req.quiz
+  .destroy()
   .then(function () {
     res.redirect('/quizes');
-  }).catch(function (error) { next(error); });
+  })
+  .catch(function (error) { next(error); });
 };

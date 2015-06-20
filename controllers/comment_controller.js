@@ -3,9 +3,8 @@ var helpers = require('./helpers.js');
 
 // Autoload :commentId de comentarios
 exports.load = function (req, res, next, commentId) {
-  models.Comment.find({
-    where: { id: Number(commentId) }
-  })
+  models.Comment
+  .findById(Number(commentId))
   .then(function (comment) {
     if (comment) {
       req.comment = comment;
@@ -13,7 +12,8 @@ exports.load = function (req, res, next, commentId) {
     } else {
       next(new Error('No existe commentId=' + commentId));
     }
-  }).catch(function (error) { next(error); });
+  })
+  .catch(function (error) { next(error); });
 };
 
 // GET /quizes/:quizId/comments/new
@@ -30,16 +30,20 @@ exports.create = function(req, res) {
     }
   );
 
-  var err = comment.validate();
+  comment
+  .validate()
+  .then(
+    function(err){
+      if (err) {
+        res.render('comments/new.ejs', { quizid: req.params.quizId, comment: comment, errors: err.errors });
+      } else {
+        comment // save: guarda en DB campo texto de comment
+        .save()
+        .then(function() { res.redirect('/quizes/'+req.params.quizId); });
+      }      // res.redirect: Redirección HTTP a lista de preguntas
+    }
+  ).catch(function(error) { next(error); });
 
-  if (err) {
-    var errors = helpers.errToArray(err);
-
-    res.render('comments/new.ejs', { quizid: req.params.quizId, comment: comment, errors: errors });
-  } else {
-    comment.save() // guardamos el comentario en la BD
-    .then( function() { res.redirect('/quizes/' + req.params.quizId); });
-  } // TODO: Falta catch para errores
 };
 
 // GET /quizes/:quizId/comments/:commentId/publish
