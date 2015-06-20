@@ -27,8 +27,11 @@ app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookieParser('Quiz 2015'));
-app.use(session());
+// NOTE: ver https://github.com/expressjs/session#cookie-options
+var secret = 'Quiz 2015';
+app.use(cookieParser(secret));
+// NOTE: ver https://github.com/expressjs/session
+app.use(session({ resave: true, saveUninitialized: false, secret: secret }));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
