@@ -10,5 +10,15 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     }
+  },
+  {
+    classMethods: {
+      countUnpublished: function () {
+        return this.count({ where: { publicado: false } });
+      },
+      countCommentedQuizes: function () { // NOTE: mejor en el modelo Quiz ¿cómo?
+        return this.aggregate('QuizId', 'count', { distinct: true });
+      }
+    }
   });
 };

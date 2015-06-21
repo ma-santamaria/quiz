@@ -23,5 +23,18 @@ module.exports = function(sequelize, DataTypes) {
                 }
               }
             }
-          });
+          }
+          // ,
+          // {
+          //   classMethods: {
+          //     countCommented: function () {
+          //       return models.sequelize // ver como acceder a sequelize desde aquí
+          //       .query("SELECT COUNT(DISTINCT(`QuizId`)) as `count` FROM `Comments`") // devolver solo la promesa
+          //       .spread(function (results, metadata) { // esto no creo que sea necesario hacerlo
+          //         numCommented = results[0].count;
+          //       });
+          //     }
+          //   }
+          // }
+          );
 };

@@ -28,3 +28,5 @@ span.capitalize {
 }
 
 .right { float: right; }
+
+ul { list-style-position: inside; }

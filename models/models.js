@@ -34,6 +34,7 @@ var Quiz = sequelize.import(quiz_path);
 var comment_path = path.join(__dirname,'comment');
 var Comment = sequelize.import(comment_path);
 
+// Establecer las relaciones
 Comment.belongsTo(Quiz);
 Quiz.hasMany(Comment, { onDelete: 'cascade',
                         hooks: true });
